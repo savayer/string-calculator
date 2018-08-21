@@ -1,0 +1,33 @@
+body {
+    min-width: 390px;
+    min-height: 300px;
+}
+#wrapper {
+    padding: 15px;
+    width: 390px;
+}
+
+.content {
+    display: flex;
+}
+
+input[name="expression"] {
+    height: 50px;
+    font-size: 20px;
+    text-align: right;  
+}
+
+.btn, .btn-equals {
+    font-size: 18px;
+    height: 50px;
+    width: 50px;
+    margin: 3px;
+}
+
+.btn-equals {
+    width: 108px
+}
+
+.screen {
+    padding: 10px 5px 10px 5px;
+}
