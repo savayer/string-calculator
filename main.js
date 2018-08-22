@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             countOperand++;
                             break;
                         }
-                        if ((stack.indexOf('(') !== -1 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
+                        if (( (expression.length - stack.length - outputArray.length) > 0 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
                             stack.push(cur);
                             break;
                         }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             stack.push(cur);
                             countOperand++;                            
                         }
-                        if ((stack.indexOf('(') !== -1 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
+                        if (( (expression.length - stack.length - outputArray.length) > 0 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
                             stack.push(cur);
                             break;
                         }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (cur == '+' || cur == '-' || cur == '*' || cur == '/') {
                             outputArray[countOperand] = stack.pop();
                             stack.push(cur);
-                            countOperand++;                            
+                            countOperand++;
                         }
                         openBracket();
                         break;
@@ -123,7 +123,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 //console.log(`cur = ${cur}; stack = ${stack}; output = ${outputArray}`)
 
             }
-            if ( index === expression.length-1 ) outputArray[outputArray.length] = stack.pop();
+            if ( index === expression.length-1 ) {
+                outputArray[outputArray.length] = stack.pop();
+                countOperand++;
+                length = stack.length;
+                if (length !== 0) {
+                    for (let i = 0; i < length; i++) {
+                        countOperand++;
+                        outputArray[countOperand] = stack.pop();
+                    }
+                }
+            } 
         });
 
         
@@ -136,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(OPN);
         field.value = evaluate(OPN);
         outputArray = [];
-        //console.log('result '+ evaluate('5 2 * 10 +'));
+        //console.log('result '+ evaluate('5 2 8 * +'));
         //console.log(evaluate('6 10 + 4 - 1 1 2 * + / 1 +'));
 
     })
