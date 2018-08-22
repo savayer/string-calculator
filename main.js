@@ -11,12 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
             '/'   : (x, y) => x / y,
             'pow' :     x => Math.pow(x,2),
             'sqrt':     x => Math.sqrt(x)
-        },
-        priority   = {
-            '+': 1,
-            '-': 1,
-            '*': 2,
-            '/': 2
         };
 
     for (var i = 0; i < buttons.length; i++) {
@@ -48,51 +42,99 @@ document.addEventListener('DOMContentLoaded', function() {
             outputArray = [],
             stack       = [],
             countOperand = 0;
-            //(6+10-4)/(1+1*2)+1
-        expression.forEach( (cur, i) => {
+            // (6+10-4)/(1+1*2)+1
+        expression.forEach( (cur, index) => {
             if (!isNaN( Number(cur) ) || cur == '.') { //если число              
                 outputArray[countOperand] == undefined //если операнд не записан
                     ? outputArray[countOperand] = cur //запишем
                     : outputArray[countOperand] += cur; //в случае если операнд не одна цифра, а число, то продолжим записывать
             } else {
                 countOperand++;
-/*                 if (stack.length === 0) {
-                    stack.push(cur);
-                } else if (stack[stack.length-1] == '*' || stack[stack.length-1] == '/' && cur == '+' || cur == '-') {
-                    outputArray[countOperand] = stack.pop();
-                    stack.push(cur);
-                    countOperand++;
-                } else if (stack[stack.length-1] == '+' || stack[stack.length-1] == '-' && cur == '*' || cur == '/') {
-                    outputArray[countOperand] = cur;
-                    countOperand++;
-                } else stack.push(cur); */
-     /*            if (stack.length === 0) { 
+                function openBracket() {
+                    if (cur == ')') {
+                        let poped, length = stack.length;
+
+                        for (let i = 0; i < length; i++) {
+                            poped = stack.pop();          
+                            if (poped == '(') break;
+                            outputArray[countOperand] = poped;
+                            countOperand++; 
+                        }
+                    }
+                }
+                if (stack.length === 0 || cur == '(') { 
                     stack.push(cur);
                     return false;
                 }
                 switch (stack[stack.length-1]) {
-                    case '(':
-                        
+                    case '+':
+                        if ( (cur == '-' || cur == '+') ) { //сравнение предыдущей операции с текущей. Их приоритет равен - всё равно меняем
+                            outputArray[countOperand] = stack.pop();
+                            stack.push(cur);
+                            countOperand++;
+                            break;
+                        }
+                        if ((stack.indexOf('(') !== -1 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
+                            stack.push(cur);
+                            break;
+                        }
+                        if (cur == '*' || cur == '/') {
+                            outputArray[countOperand] = cur;
+                            countOperand++;
+                        }
+                        openBracket();                        
+                        break;
+                    case '-':
+                        if (cur == '+' || cur == '-') {
+                            outputArray[countOperand] = stack.pop();
+                            stack.push(cur);
+                            countOperand++;                            
+                        }
+                        if ((stack.indexOf('(') !== -1 && (cur == '*' || cur == '/') )) { //приоритет * и / выше, поэтому просто добавляем в стэк?...если в выражении имеются скобки
+                            stack.push(cur);
+                            break;
+                        }
+                        if (cur == '*' || cur == '/') {
+                            outputArray[countOperand] = cur;
+                            countOperand++;
+                        }
+                        openBracket();
+                        break;
+                    case '*':
+                        if (cur == '+' || cur == '-' || cur == '*' || cur == '/') {
+                            outputArray[countOperand] = stack.pop();
+                            stack.push(cur);
+                            countOperand++;                            
+                        }
+                        openBracket();
+                        break;
+                    case '/':
+                        if (cur == '+' || cur == '-' || cur == '*' || cur == '/') {
+                            outputArray[countOperand] = stack.pop();
+                            stack.push(cur);
+                            countOperand++;                            
+                        }
+                        openBracket();
                         break;
                     default: 
                         stack.push(cur);
                         break;
                 }
-
-                function changeOperator() {
-                    outputArray[countOperand] = stack.pop();
-                    stack.push(cur);
-                } */
+                //console.log(`cur = ${cur}; stack = ${stack}; output = ${outputArray}`)
 
             }
-            if ( i === expression.length-1 ) outputArray[outputArray.length] = stack.pop();
+            if ( index === expression.length-1 ) outputArray[outputArray.length] = stack.pop();
         });
 
         
 
         stack = [];
-        console.log(outputArray.join(' '))
-        field.value = evaluate(outputArray.join(' '));
+        //console.log(outputArray.join(' '))
+        let OPN = outputArray.filter(item => {
+            return item != ' ';
+        }).join(' ');
+        console.log(OPN);
+        field.value = evaluate(OPN);
         outputArray = [];
         //console.log('result '+ evaluate('5 2 * 10 +'));
         //console.log(evaluate('6 10 + 4 - 1 1 2 * + / 1 +'));
